@@ -1,3 +1,4 @@
+import { Amplify } from "aws-amplify";
 import {
   fetchAuthSession,
   fetchUserAttributes,
@@ -5,24 +6,27 @@ import {
   signOut,
 } from "aws-amplify/auth";
 import { list } from "aws-amplify/storage";
-import { Amplify } from "aws-amplify";
+import { generateClient } from "aws-amplify/api";
 import config from "../amplifyconfiguration.json";
 import "@aws-amplify/ui-vue/styles.css";
+
+const client = generateClient();
 
 export default defineNuxtPlugin({
   name: "AmplifyAPIs",
   enforce: "pre",
-  hooks: {
-    "app:beforeMount"() {
-      Amplify.configure(config, { ssr: true });
-    },
-  },
 
   setup() {
+    // This configures Amplify on the client side of your Nuxt app
+    Amplify.configure(config, { ssr: true });
+
     return {
       provide: {
-        // You can more APIs here as needed
-        // and you don't need to follow the object shape
+        // You can add the Amplify APIs that you will use on the client side
+        // of your Nuxt app here.
+        //
+        // You can call the API by via the composable `useNuxtApp()`. For example:
+        // `useNuxtApp().$Amplify.Auth.fetchAuthSession()`
         Amplify: {
           Auth: {
             fetchAuthSession,
@@ -32,6 +36,9 @@ export default defineNuxtPlugin({
           },
           Storage: {
             list,
+          },
+          GraphQL: {
+            client,
           },
         },
       },

@@ -1,20 +1,18 @@
-import { H3Event, EventHandlerRequest } from "h3";
+import type { H3Event, EventHandlerRequest } from "h3";
 import {
   createKeyValueStorageFromCookieStorageAdapter,
   createUserPoolsTokenProvider,
   createAWSCredentialsAndIdentityIdProvider,
   runWithAmplifyServerContext,
-} from "aws-amplify/adapter-core";
-import {
   AmplifyServer,
   CookieStorage,
-} from "@aws-amplify/core/internals/adapter-core";
-import { parseAWSExports } from "@aws-amplify/core/internals/utils";
+} from "aws-amplify/adapter-core";
+import { parseAmplifyConfig } from "aws-amplify/utils";
 
 import type { LibraryOptions } from "@aws-amplify/core";
 import config from "~/amplifyconfiguration.json";
 
-const amplifyConfig = parseAWSExports(config);
+const amplifyConfig = parseAmplifyConfig(config);
 
 const createCookieStorageAdapter = (
   event: H3Event<EventHandlerRequest>
@@ -66,6 +64,7 @@ const createLibraryOptions = (
 };
 
 export const runAmplifyApi = <Result>(
+  // we need the event object to create a context accordingly
   event: H3Event<EventHandlerRequest>,
   operation: (
     contextSpec: AmplifyServer.ContextSpec
